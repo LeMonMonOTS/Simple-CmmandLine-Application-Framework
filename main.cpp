@@ -2,11 +2,10 @@
  * @Author: lemonmon
  * @Date: 2023-11-18 10:36:51
  * @LastEditors: lemonmon
- * @LastEditTime: 2024-01-22 12:41:15
+ * @LastEditTime: 2024-01-22 12:57:23
  * @Description: SCAF示例DEMO
  */
 #include "scaf.hpp"
-#include <conio.h> // getch
 
 /*
  * 编写的应用
@@ -98,7 +97,7 @@ public:
         while (true) {
             clearCmdWin();
             cur_page->printPage();
-            input_ch = getch(); // 只支持单字符
+            input_ch = getCharNoResponse(); // 只支持单字符
             if (input_ch == 27) {
                 break; // 输入esc时退出
             }
