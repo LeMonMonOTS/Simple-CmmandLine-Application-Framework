@@ -2,7 +2,7 @@
  * @Author: lemonmon
  * @Date: 2024-01-21 19:38:29
  * @LastEditors: lemonmon
- * @LastEditTime: 2024-01-22 00:16:30
+ * @LastEditTime: 2024-01-22 12:43:39
  * @Description: 一个构造命令行应用的简单框架。
  * 本框架只考虑页面Page上有控件Item，以及Page和Page之间通过
  * Item选项切换，并运行选择Item后执行特定回调函数。
@@ -20,7 +20,13 @@
 #include <windows.h>
 #endif
 
-void ClearCmdWin(void)
+// #define delnull(p)   \
+//     do {             \
+//         delete p;    \
+//         p = nullptr; \
+//     } while (0);
+
+void clearCmdWin(void)
 {
 #ifdef _WIN32
     system("cls"); // windows cmd
@@ -28,10 +34,17 @@ void ClearCmdWin(void)
     system("clear"); // linux cmd
 #endif
 }
-void WaitCmd(void)
+
+void waitCmd(void)
 {
-    std::cout << "Press any key to continue...";
+    std::cout << "Press Enter to Continue...";
     getchar();
+}
+
+void clearInBuffer(void)
+{
+    while (getchar() != '\n') {
+    }
 }
 
 namespace SCAF
@@ -45,6 +58,7 @@ constexpr unsigned int MAX_STR_LEN = 65536;
 
 /*
  * 页面中基本操作单元Item
+ * 仅支持Item的Index为单字符。
  */
 class Item
 {
@@ -52,7 +66,7 @@ public:
     Item() {}
     Item(const char *name_,
          Page *const loc_page_,
-         const int index_,
+         const char index_,
          Page *const nxt_page_ = nullptr,
          void (*const fcallback_)(Item const *self) = nullptr) // 回调函数传入自身地址，以便回调中调用Item的相关信息
         : name(name_), loc_page(loc_page_), index(index_), nxt_page(nxt_page_), fcallback(fcallback_)
@@ -95,9 +109,9 @@ public:
     }
 
 protected:
-    const char *name;
+    const char *name = "\0";
     Page *loc_page = nullptr;
-    int index = 0;
+    char index = 0;
     Page *nxt_page = nullptr;
     void (*fcallback)(Item const *self) = nullptr; // 回调函数地址，此处假设回调函数没有入参
 };
@@ -118,9 +132,13 @@ public:
         // page析构时回收其上所有item
         for (int i = 0; i < items_num; ++i) {
             delete items[i];
+            items[i] = nullptr;
         }
     }
 
+    /*
+     * 此函数add的Item会在该page析构时释放。
+     */
     bool addItem(Item *const item)
     {
         if (items_num >= MAX_ITEM_ONE_PAGE) {
@@ -167,11 +185,11 @@ public:
 
     void printTitle(void)
     {
-        PrintWholeLine(LINES_BND_WDITH, '*');
+        printWholeLine(LINES_BND_WDITH, '*');
         cout << endl;
         printWrappedStrMiddle(LINES_BND_WDITH, '*', title);
         cout << endl;
-        PrintWholeLine(LINES_BND_WDITH, '*');
+        printWholeLine(LINES_BND_WDITH, '*');
         cout << endl;
     }
 
@@ -188,7 +206,7 @@ public:
 
     void printEndLine(void)
     {
-        PrintWholeLine(LINES_BND_WDITH, '*');
+        printWholeLine(LINES_BND_WDITH, '*');
         cout << endl;
     }
 
@@ -197,7 +215,7 @@ private:
     Item *items[MAX_ITEM_ONE_PAGE] = {nullptr};
     int items_num = 0;
 
-    static inline void PrintWholeLine(const unsigned int len, const char c)
+    static inline void printWholeLine(const unsigned int len, const char c)
     {
         for (int i = 0; i < len; ++i) {
             cout << c;
@@ -205,17 +223,18 @@ private:
     }
 
     static inline void printWrappedNumberedStrLeft(
-        const int num,
+        const char num,
         const unsigned int len,
         const char wrapper,
         const char *str)
     {
+        // 注意本函数的num打印为char
         size_t str_len = strlen(str);
         cout << wrapper;
         cout << num << ": " << str;
         size_t valid_str_len = str_len + 5;
         if (len >= valid_str_len) {
-            PrintWholeLine(len - valid_str_len, ' ');
+            printWholeLine(len - valid_str_len, ' ');
             cout << wrapper;
         } else {
             char tmp[MAX_STR_LEN];
@@ -240,9 +259,9 @@ private:
         cout << wrapper;
         if (start_pos >= 0) {
             int width = str_len + start_pos + 1;
-            PrintWholeLine(start_pos, ' ');
+            printWholeLine(start_pos, ' ');
             cout << str;
-            PrintWholeLine(len - width - 1, ' ');
+            printWholeLine(len - width - 1, ' ');
             cout << wrapper;
         } else {
             char tmp[MAX_STR_LEN];
