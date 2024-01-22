@@ -2,7 +2,7 @@
  * @Author: lemonmon
  * @Date: 2023-11-18 10:36:51
  * @LastEditors: lemonmon
- * @LastEditTime: 2024-01-22 12:57:23
+ * @LastEditTime: 2024-01-22 13:26:00
  * @Description: SCAF示例DEMO
  */
 #include "scaf.hpp"
@@ -97,7 +97,7 @@ public:
         while (true) {
             clearCmdWin();
             cur_page->printPage();
-            input_ch = getCharNoResponse(); // 只支持单字符
+            input_ch = getch(); // 只支持单字符
             if (input_ch == 27) {
                 break; // 输入esc时退出
             }
@@ -120,10 +120,13 @@ private:
 
 int main()
 {
+    // 准备工作
 #ifdef _WIN32
     SetConsoleOutputCP(CP_UTF8); // windows下需要手动将控制台的输出编码设置为UTF-8
 #endif
+
     APP::Application app;
     app.run();
+
     return 0;
 }

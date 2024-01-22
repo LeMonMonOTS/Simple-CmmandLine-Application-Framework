@@ -2,7 +2,7 @@
  * @Author: lemonmon
  * @Date: 2024-01-21 19:38:29
  * @LastEditors: lemonmon
- * @LastEditTime: 2024-01-22 12:57:02
+ * @LastEditTime: 2024-01-22 13:29:46
  * @Description: 一个构造命令行应用的简单框架。
  * 本框架只考虑页面Page上有控件Item，以及Page和Page之间通过
  * Item选项切换，并运行选择Item后执行特定回调函数。
@@ -19,6 +19,16 @@
 #ifdef _WIN32
 #include <conio.h> // getch
 #include <windows.h>
+#else
+char getch(){
+    char ch;
+    system("stty -echo");
+    system("stty -icanon");
+    ch = getchar();
+    system("stty echo");
+    system("stty icanon");
+    return ch;
+}
 #endif
 
 // #define delnull(p)   \
@@ -26,18 +36,6 @@
 //         delete p;    \
 //         p = nullptr; \
 //     } while (0);
-
-char getCharNoResponse()
-{
-#ifdef _WIN32
-    return getch();
-#else
-    system("stty -echo");
-    char c = getchar();
-    system("stty echo");
-    return c;
-#endif
-}
 
 void clearCmdWin(void)
 {
