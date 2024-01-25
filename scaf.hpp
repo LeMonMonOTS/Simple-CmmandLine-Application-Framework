@@ -2,7 +2,7 @@
  * @Author: lemonmon
  * @Date: 2024-01-21 19:38:29
  * @LastEditors: lemonmon
- * @LastEditTime: 2024-01-22 13:29:46
+ * @LastEditTime: 2024-01-25 13:25:34
  * @Description: 一个构造命令行应用的简单框架。
  * 本框架只考虑页面Page上有控件Item，以及Page和Page之间通过
  * Item选项切换，并运行选择Item后执行特定回调函数。
@@ -124,7 +124,7 @@ protected:
     Page *loc_page = nullptr;
     char index = 0;
     Page *nxt_page = nullptr;
-    void (*fcallback)(Item const *self) = nullptr; // 回调函数地址，此处假设回调函数没有入参
+    void (*fcallback)(Item const *self) = nullptr; // 回调函数地址，此处假设回调函数没有出参
 };
 
 /*
